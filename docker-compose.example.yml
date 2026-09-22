@@ -1,0 +1,47 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest # 💡 Tip: En producción, se recomienda fijar la versión (ej. n8nio/n8n:1.60)
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n    # 📂 Persistencia de datos oficial de n8n
+    environment:
+      # ==========================================
+      # 🌐 CONFIGURACIÓN DE RED Y DOMINIO
+      # ==========================================
+      - N8N_HOST=localhost          # 🔄 Cambia a tu dominio (ej. n8n.tudominio.com) en producción
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http           # 🔒 Cambia a 'https' si usas un dominio con certificado SSL
+      
+      # ==========================================
+      # 🌍 ZONA HORARIA (Adaptable a tu país)
+      # ==========================================
+      # 📖 Lista completa de zonas horarias: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      # Ejemplos por región:
+      #   - México/Centroamérica: America/Mexico_City, America/Bogota, America/Costa_Rica
+      #   - Sudamérica: America/Buenos_Aires, America/Santiago, America/Lima
+      #   - Europa: Europe/Madrid, Europe/London, Europe/Paris
+      #   - EE.UU: America/New_York, America/Los_Angeles
+      - TZ=America/New_York         # 👈 CAMBIA ESTO por la zona horaria de tu servidor/país
+      - GENERIC_TIMEZONE=America/New_York # 👈 DEBE COINCIDIR con la variable TZ
+
+      # ==========================================
+      # 🔐 SEGURIDAD Y ENCRIPTACIÓN
+      # ==========================================
+      # ⚠️ ¡MUY IMPORTANTE! Nunca dejes esto vacío.
+      # Genera una clave segura en tu terminal con: openssl rand -hex 32
+      - N8N_ENCRYPTION_KEY=cambia_esto_por_una_clave_segura_generada_con_openssl_1234567890abcdef
+
+      # ==========================================
+      # 🔗 CONFIGURACIÓN DE WEBHOOKS
+      # ==========================================
+      # Debe coincidir con N8N_PROTOCOL y N8N_HOST.
+      # Ejemplo local: http://localhost:5678/
+      # Ejemplo producción: https://n8n.tudominio.com/
+      - WEBHOOK_URL=http://localhost:5678/
+
+volumes:
+  n8n_data:
+    # El volumen se crea automáticamente al iniciar el contenedor
